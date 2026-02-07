@@ -14,7 +14,7 @@ from PyQt5.QtCore import QTimer, QSettings, QModelIndex, Qt, QCoreApplication
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtTest import QTest
 
-from uaclient.mainwindow import Window
+from opcua_client.mainwindow import Window
 
 
 class TestClient(unittest.TestCase):

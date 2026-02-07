@@ -36,7 +36,11 @@ Issues = "https://github.com/FreeOpcUa/opcua-client-gui/issues"
 opcua-client = "opcua_client.mainwindow:main"
 
 [dependency-groups]
-dev = ["pytest>=6.0", "pytest-qt"]
+dev = [
+    "opcua>=0.98.13",
+    "pytest>=6.0",
+    "pytest-qt",
+]
 
 [tool.ruff]
 line-length = 100

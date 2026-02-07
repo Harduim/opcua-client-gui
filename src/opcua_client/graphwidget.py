@@ -19,17 +19,16 @@ except ImportError:
 
 if use_graph:
     pg.setConfigOptions(antialias=True)
-    pg.setConfigOption('background', 'w')
-    pg.setConfigOption('foreground', 'k')
+    pg.setConfigOption("background", "w")
+    pg.setConfigOption("foreground", "k")
 
 logger = logging.getLogger(__name__)
 
 
 class GraphUI(object):
-
     # use tango color schema (public domain)
-    colorCycle = ['#4e9a06ff', '#ce5c00ff', '#3465a4ff', '#75507bff', '#cc0000ff', '#edd400ff']
-    acceptedDatatypes = ['Decimal128', 'Double', 'Float', 'Integer', 'UInteger']
+    colorCycle = ["#4e9a06ff", "#ce5c00ff", "#3465a4ff", "#75507bff", "#cc0000ff", "#edd400ff"]
+    acceptedDatatypes = ["Decimal128", "Double", "Float", "Integer", "UInteger"]
 
     def __init__(self, window, uaclient):
         self.window = window
@@ -42,7 +41,7 @@ class GraphUI(object):
         self._node_list = []  # holds the nodes to poll
         self._channels = []  # holds the actual data
         self._curves = []  # holds the curve objects
-        self.pw = pg.PlotWidget(name='Plot1')
+        self.pw = pg.PlotWidget(name="Plot1")
         self.pw.showGrid(x=True, y=True, alpha=0.3)
         self.legend = self.pw.addLegend()
         self.window.ui.graphLayout.addWidget(self.pw)
@@ -60,7 +59,7 @@ class GraphUI(object):
 
     def restartTimer(self):
         # stop current timer, if it exists
-        if hasattr(self, 'timer') and self.timer.isActive():
+        if hasattr(self, "timer") and self.timer.isActive():
             self.timer.stop()
 
         # define the number of polls displayed in graph
@@ -95,8 +94,14 @@ class GraphUI(object):
                 self._node_list.append(node)
                 displayName = node.read_display_name().Text
                 colorIndex = len(self._node_list) % len(self.colorCycle)
-                self._curves.append \
-                    (self.pw.plot(pen=pg.mkPen(color=self.colorCycle[colorIndex], width=3, style=Qt.SolidLine), name=displayName))
+                self._curves.append(
+                    self.pw.plot(
+                        pen=pg.mkPen(
+                            color=self.colorCycle[colorIndex], width=3, style=Qt.SolidLine
+                        ),
+                        name=displayName,
+                    )
+                )
                 # set initial data to zero
                 self._channels.append(np.zeros(self.N))  # init data sequence with zeros
                 # add the new channel data to the new curve
@@ -104,7 +109,10 @@ class GraphUI(object):
                 logger.info("Variable %s added to graph", displayName)
 
             else:
-                logger.info("Variable cannot be added to graph because it is of type %s or an array", dtypeStr)
+                logger.info(
+                    "Variable cannot be added to graph because it is of type %s or an array",
+                    dtypeStr,
+                )
 
     @trycatchslot
     def _remove_node_from_channel(self, node=None):

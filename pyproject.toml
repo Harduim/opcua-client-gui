@@ -37,3 +37,6 @@ opcua-client = "opcua_client.mainwindow:main"
 
 [dependency-groups]
 dev = ["pytest>=6.0", "pytest-qt"]
+
+[tool.ruff]
+line-length = 100

@@ -5,12 +5,20 @@ import sys
 from datetime import datetime
 import logging
 
-from PyQt5.QtCore import pyqtSignal, QFile, QTimer, Qt, QObject, QSettings, QTextStream, QItemSelection, \
-    QCoreApplication
+from PyQt5.QtCore import (
+    pyqtSignal,
+    QFile,
+    QTimer,
+    Qt,
+    QObject,
+    QSettings,
+    QTextStream,
+    QItemSelection,
+    QCoreApplication,
+)
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QIcon
 from PyQt5.QtWidgets import QMainWindow, QMessageBox, QWidget, QApplication, QMenu, QDialog
 
-from opcua_client.theme import breeze_resources
 
 from asyncua import ua
 from asyncua.sync import SyncNode
@@ -21,7 +29,6 @@ from opcua_client.connection_dialog import ConnectionDialog
 from opcua_client.application_certificate_dialog import ApplicationCertificateDialog
 from opcua_client.graphwidget import GraphUI
 
-from uawidgets import resources  # must be here for ressources even if not used
 from uawidgets.attrs_widget import AttrsWidget
 from uawidgets.tree_widget import TreeWidget
 from uawidgets.refs_widget import RefsWidget
@@ -54,7 +61,6 @@ class EventHandler(QObject):
 
 
 class EventUI(object):
-
     def __init__(self, window, uaclient):
         self.window = window
         self.uaclient = uaclient
@@ -123,7 +129,6 @@ class EventUI(object):
 
 
 class DataChangeUI(object):
-
     def __init__(self, window, uaclient):
         self.window = window
         self.uaclient = uaclient
@@ -141,7 +146,9 @@ class DataChangeUI(object):
         self.window.addAction(self.window.ui.actionUnsubscribeDataChange)
 
         # handle subscriptions
-        self._subhandler.data_change_fired.connect(self._update_subscription_model, type=Qt.QueuedConnection)
+        self._subhandler.data_change_fired.connect(
+            self._update_subscription_model, type=Qt.QueuedConnection
+        )
 
         # accept drops
         self.model.canDropMimeData = self.canDropMimeData
@@ -213,7 +220,6 @@ class DataChangeUI(object):
 
 
 class Window(QMainWindow):
-
     def __init__(self):
         QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
@@ -237,7 +243,10 @@ class Window(QMainWindow):
         QCoreApplication.setApplicationName("OpcUaClient")
         self.settings = QSettings()
 
-        self._address_list = self.settings.value("address_list", ["opc.tcp://localhost:4840", "opc.tcp://localhost:53530/OPCUA/SimulationServer/"])
+        self._address_list = self.settings.value(
+            "address_list",
+            ["opc.tcp://localhost:4840", "opc.tcp://localhost:53530/OPCUA/SimulationServer/"],
+        )
         print("ADR", self._address_list)
         self._address_list_max_count = int(self.settings.value("address_list_max_count", 10))
 
@@ -261,7 +270,9 @@ class Window(QMainWindow):
         self.graph_ui = GraphUI(self, self.uaclient)
 
         self.ui.addrComboBox.currentTextChanged.connect(self._uri_changed)
-        self._uri_changed(self.ui.addrComboBox.currentText())  # force update for current value at startup
+        self._uri_changed(
+            self.ui.addrComboBox.currentText()
+        )  # force update for current value at startup
 
         self.ui.treeView.selectionModel().selectionChanged.connect(self.show_refs)
         self.ui.actionCopyPath.triggered.connect(self.tree_ui.copy_path)
@@ -271,7 +282,10 @@ class Window(QMainWindow):
         self.ui.treeView.selectionModel().selectionChanged.connect(self.show_attrs)
         self.ui.attrRefreshButton.clicked.connect(self.show_attrs)
 
-        self.resize(int(self.settings.value("main_window_width", 800)), int(self.settings.value("main_window_height", 600)))
+        self.resize(
+            int(self.settings.value("main_window_width", 800)),
+            int(self.settings.value("main_window_height", 600)),
+        )
         data = self.settings.value("main_window_state", None)
         if data:
             self.restoreState(data)
@@ -284,7 +298,9 @@ class Window(QMainWindow):
         self.ui.actionDisconnect.triggered.connect(self.disconnect)
 
         self.ui.connectOptionButton.clicked.connect(self.show_connection_dialog)
-        self.ui.actionClient_Application_Certificate.triggered.connect(self.show_application_certificate_dialog)
+        self.ui.actionClient_Application_Certificate.triggered.connect(
+            self.show_application_certificate_dialog
+        )
         self.ui.actionDark_Mode.triggered.connect(self.dark_mode)
 
     def _uri_changed(self, uri):
@@ -312,11 +328,11 @@ class Window(QMainWindow):
             self.uaclient.application_certificate_path = dia.certificate_path
             self.uaclient.application_private_key_path = dia.private_key_path
         self.uaclient.save_application_certificate_settings()
-            
+
     @trycatchslot
     def show_refs(self, selection):
         if isinstance(selection, QItemSelection):
-            if not selection.indexes(): # no selection
+            if not selection.indexes():  # no selection
                 return
 
         node = self.get_current_node()
@@ -326,7 +342,7 @@ class Window(QMainWindow):
     @trycatchslot
     def show_attrs(self, selection):
         if isinstance(selection, QItemSelection):
-            if not selection.indexes(): # no selection
+            if not selection.indexes():  # no selection
                 return
 
         node = self.get_current_node()
@@ -383,7 +399,6 @@ class Window(QMainWindow):
             self.attrs_ui.clear()
             self.datachange_ui.clear()
             self.event_ui.clear()
-
 
     def closeEvent(self, event):
         self.tree_ui.save_state()
@@ -463,10 +478,10 @@ def main():
     logging.getLogger().addHandler(handler)
     logging.getLogger("uaclient").setLevel(logging.INFO)
     logging.getLogger("uawidgets").setLevel(logging.INFO)
-    #logging.getLogger("opcua").setLevel(logging.INFO)  # to enable logging of ua client library
+    # logging.getLogger("opcua").setLevel(logging.INFO)  # to enable logging of ua client library
 
     # set stylesheet
-    if (QSettings().value("dark_mode", "false") == "true"):
+    if QSettings().value("dark_mode", "false") == "true":
         file = QFile(":/dark.qss")
         file.open(QFile.ReadOnly | QFile.Text)
         stream = QTextStream(file)

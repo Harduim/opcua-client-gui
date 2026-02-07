@@ -478,7 +478,7 @@ def main():
     logging.getLogger().addHandler(handler)
     logging.getLogger("uaclient").setLevel(logging.INFO)
     logging.getLogger("uawidgets").setLevel(logging.INFO)
-    # logging.getLogger("opcua").setLevel(logging.INFO)  # to enable logging of ua client library
+    logging.getLogger("opcua").setLevel(logging.INFO)  # to enable logging of ua client library
 
     # set stylesheet
     if QSettings().value("dark_mode", "false") == "true":

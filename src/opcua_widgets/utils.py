@@ -1,4 +1,3 @@
-
 import inspect
 import logging
 
@@ -12,10 +11,11 @@ def trycatchslot(func):
     log and call a method called show_error or a signal
     called error in case of error
     """
+
     def wrapper(self, *args):
         # filter out excess args as qt signals do
         sig = inspect.signature(func)
-        args = args[:(len(sig.parameters)-1)]
+        args = args[: (len(sig.parameters) - 1)]
         result = None
         try:
             result = func(self, *args)
@@ -28,6 +28,5 @@ def trycatchslot(func):
             else:
                 logger.warning("Error class % has no member show_error or error", self)
         return result
+
     return wrapper
-
-

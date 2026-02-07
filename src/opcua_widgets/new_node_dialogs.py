@@ -1,13 +1,24 @@
 import uuid
 
 from PyQt5.QtCore import QSettings, Qt
-from PyQt5.QtWidgets import QPushButton, QComboBox, QLabel, QLineEdit, QHBoxLayout, QDialog, QDialogButtonBox, QVBoxLayout, QCheckBox, QFrame
+from PyQt5.QtWidgets import (
+    QPushButton,
+    QComboBox,
+    QLabel,
+    QLineEdit,
+    QHBoxLayout,
+    QDialog,
+    QDialogButtonBox,
+    QVBoxLayout,
+    QCheckBox,
+    QFrame,
+)
 
 from asyncua import ua
 from asyncua.common.ua_utils import string_to_variant
 from asyncua.sync import data_type_to_variant_type
 
-from uawidgets.get_node_dialog import GetNodeButton, GetDataTypeNodeButton
+from opcua_widgets.get_node_dialog import GetNodeButton, GetDataTypeNodeButton
 
 
 class NewNodeBaseDialog(QDialog):
@@ -43,7 +54,9 @@ class NewNodeBaseDialog(QDialog):
         self.layout.addWidget(self.nodeidCheckBox)
         self.nodeidLineEdit = QLineEdit(self)
         self.nodeidLineEdit.setMinimumWidth(80)
-        self.nodeidLineEdit.setText(self.settings.value("last_nodeid_prefix", "ns={};i=20000".format(nsidx)))
+        self.nodeidLineEdit.setText(
+            self.settings.value("last_nodeid_prefix", "ns={};i=20000".format(nsidx))
+        )
         self.layout.addWidget(self.nodeidLineEdit)
 
         # restore check box state from settings
@@ -54,7 +67,9 @@ class NewNodeBaseDialog(QDialog):
             self.nodeidCheckBox.setChecked(True)
             self.nodeidLineEdit.hide()
 
-        self.buttons = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, Qt.Horizontal, self)
+        self.buttons = QDialogButtonBox(
+            QDialogButtonBox.Ok | QDialogButtonBox.Cancel, Qt.Horizontal, self
+        )
         self.vlayout.addWidget(self.buttons)
 
         self.buttons.accepted.connect(self.accept)
@@ -64,8 +79,8 @@ class NewNodeBaseDialog(QDialog):
     def _store_state(self):
         self.settings.setValue("last_namespace", self.nsComboBox.currentIndex())
         self.settings.setValue("last_node_widget_vis", not self.nodeidCheckBox.isChecked())
-        ns_nt = self.nodeidLineEdit.text().split(';')
-        self.settings.setValue("last_nodeid_prefix", ns_nt[0] + ';' + ns_nt[1][0:2])
+        ns_nt = self.nodeidLineEdit.text().split(";")
+        self.settings.setValue("last_nodeid_prefix", ns_nt[0] + ";" + ns_nt[1][0:2])
 
     def _show_nodeid(self, val):
         if val:
@@ -129,24 +144,27 @@ class NewUaVariableDialog(NewNodeBaseDialog):
 
     def _data_type_changed(self, node):
         if node.nodeid in (
-                ua.NodeId(ua.ObjectIds.Decimal),
-                ua.NodeId(ua.ObjectIds.Float),
-                ua.NodeId(ua.ObjectIds.Double)):
+            ua.NodeId(ua.ObjectIds.Decimal),
+            ua.NodeId(ua.ObjectIds.Float),
+            ua.NodeId(ua.ObjectIds.Double),
+        ):
             self.valLineEdit.setText(str(0.0))
             self.valLineEdit.setEnabled(True)
         elif node.nodeid in (
-                ua.NodeId(ua.ObjectIds.UInt16),
-                ua.NodeId(ua.ObjectIds.UInt32),
-                ua.NodeId(ua.ObjectIds.UInt64),
-                ua.NodeId(ua.ObjectIds.Int16),
-                ua.NodeId(ua.ObjectIds.Int32),
-                ua.NodeId(ua.ObjectIds.Int64)):
+            ua.NodeId(ua.ObjectIds.UInt16),
+            ua.NodeId(ua.ObjectIds.UInt32),
+            ua.NodeId(ua.ObjectIds.UInt64),
+            ua.NodeId(ua.ObjectIds.Int16),
+            ua.NodeId(ua.ObjectIds.Int32),
+            ua.NodeId(ua.ObjectIds.Int64),
+        ):
             self.valLineEdit.setText(str(0))
             self.valLineEdit.setEnabled(True)
         elif node.nodeid in (
-                ua.NodeId(ua.ObjectIds.Structure),
-                ua.NodeId(ua.ObjectIds.Enumeration),
-                ua.NodeId(ua.ObjectIds.DiagnosticInfo)):
+            ua.NodeId(ua.ObjectIds.Structure),
+            ua.NodeId(ua.ObjectIds.Enumeration),
+            ua.NodeId(ua.ObjectIds.DiagnosticInfo),
+        ):
             self.valLineEdit.setText("Null")
             self.valLineEdit.setEnabled(False)
         elif node.nodeid == ua.NodeId(ua.ObjectIds.Guid):
@@ -155,7 +173,10 @@ class NewUaVariableDialog(NewNodeBaseDialog):
         elif node.nodeid == ua.NodeId(ua.ObjectIds.Boolean):
             self.valLineEdit.setText("true")
             self.valLineEdit.setEnabled(True)
-        elif node.nodeid in (ua.NodeId(ua.ObjectIds.NodeId), ua.NodeId(ua.ObjectIds.ExpandedNodeId)):
+        elif node.nodeid in (
+            ua.NodeId(ua.ObjectIds.NodeId),
+            ua.NodeId(ua.ObjectIds.ExpandedNodeId),
+        ):
             self.valLineEdit.setText("ns=1;i=1000")
             self.valLineEdit.setEnabled(True)
         elif node.nodeid == ua.NodeId(ua.ObjectIds.DateTime):
@@ -209,7 +230,7 @@ class NewUaMethodDialog(NewNodeBaseDialog):
             method_arg.ArrayDimensions = []
             method_arg.Description = ua.LocalizedText(description)
 
-            if row[0] == 'input':
+            if row[0] == "input":
                 input_args.append(method_arg)
             else:
                 output_args.append(method_arg)
@@ -245,7 +266,7 @@ class NewUaMethodDialog(NewNodeBaseDialog):
     def add_input_header(self):
         header_row = QHBoxLayout(self)
         header_row.addWidget(QLabel("Input", self))
-        #header_row.addWidget(self.add_h_line())
+        # header_row.addWidget(self.add_h_line())
         button = QPushButton("Add input argument")
         button.clicked.connect(self._add_input_row)
         header_row.addWidget(button)
@@ -254,7 +275,7 @@ class NewUaMethodDialog(NewNodeBaseDialog):
     def add_output_header(self):
         header_row = QHBoxLayout(self)
         header_row.addWidget(QLabel("Output", self))
-        #header_row.addWidget(self.add_h_line())
+        # header_row.addWidget(self.add_h_line())
         button = QPushButton("Add output argument")
         header_row.addWidget(button)
         button.clicked.connect(self._add_output_row)

@@ -7,15 +7,14 @@ from PyQt5.QtWidgets import QMenu, QAction, QStyledItemDelegate, QAbstractItemVi
 from asyncua import ua
 from asyncua.sync import SyncNode, new_node
 
-from uawidgets.utils import trycatchslot
-from uawidgets.get_node_dialog import GetNodeTextButton
+from opcua_widgets.utils import trycatchslot
+from opcua_widgets.get_node_dialog import GetNodeTextButton
 
 
 logger = logging.getLogger(__name__)
 
 
 class RefsWidget(QObject):
-
     error = pyqtSignal(Exception)
     reference_changed = pyqtSignal(SyncNode)
 
@@ -31,7 +30,9 @@ class RefsWidget(QObject):
         self.view.setModel(self.model)
         self.view.setItemDelegate(delegate)
         self.settings = QSettings()
-        self.model.setHorizontalHeaderLabels(['ReferenceType', 'NodeId', "BrowseName", "TypeDefinition"])
+        self.model.setHorizontalHeaderLabels(
+            ["ReferenceType", "NodeId", "BrowseName", "TypeDefinition"]
+        )
         state = self.settings.value("WindowState/refs_widget_state", None)
         if state is not None:
             self.view.horizontalHeader().restoreState(state)
@@ -69,7 +70,7 @@ class RefsWidget(QObject):
         self.node = None
 
     def _make_default_ref(self):
-        #FIXME: remeber last choosen values or use values that make sense
+        # FIXME: remeber last choosen values or use values that make sense
         ref = ua.ReferenceDescription()
         return ref
 
@@ -80,7 +81,7 @@ class RefsWidget(QObject):
         self._add_ref_row(ref)
         idx = self.model.index(self.model.rowCount() - 1, 0)
         self.view.setCurrentIndex(idx)
-        #self.view.edit(idx)
+        # self.view.edit(idx)
 
     @trycatchslot
     def reload(self):
@@ -107,15 +108,17 @@ class RefsWidget(QObject):
         it.IsForward = ref.IsForward
         it.TargetNodeId = ref.NodeId
         it.DeleteBidirectional = False
-        #param = ua.DeleteReferencesParameters()
-        #param.ReferencesToDelete.append(it)
+        # param = ua.DeleteReferencesParameters()
+        # param.ReferencesToDelete.append(it)
         results = self.node.server.delete_references([it])
         logger.info("Remove result: %s", results[0])
         if check:
             results[0].check()
 
     def save_state(self):
-        self.settings.setValue("WindowState/refs_widget_state", self.view.horizontalHeader().saveState())
+        self.settings.setValue(
+            "WindowState/refs_widget_state", self.view.horizontalHeader().saveState()
+        )
 
     def show_refs(self, node):
         self.clear()
@@ -145,16 +148,17 @@ class RefsWidget(QObject):
             typedef = ref.TypeDefinition.to_string()
         titem = QStandardItem(typename)
         titem.setData(ref, Qt.UserRole)
-        self.model.appendRow([
-            titem,
-            QStandardItem(nodeid),
-            QStandardItem(ref.BrowseName.to_string()),
-            QStandardItem(typedef)
-        ])
+        self.model.appendRow(
+            [
+                titem,
+                QStandardItem(nodeid),
+                QStandardItem(ref.BrowseName.to_string()),
+                QStandardItem(typedef),
+            ]
+        )
 
 
 class MyDelegate(QStyledItemDelegate):
-
     error = pyqtSignal(Exception)
     reference_changed = pyqtSignal(SyncNode)
 
@@ -212,7 +216,3 @@ class MyDelegate(QStyledItemDelegate):
 
         self.reference_changed.emit(self._widget.node)
         self._widget.reload()
-
-
-
-

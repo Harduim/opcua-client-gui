@@ -5,15 +5,25 @@ from dataclasses import fields
 
 from PyQt5.QtCore import pyqtSignal, Qt, QObject, QSettings
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
-from PyQt5.QtWidgets import QApplication, QMenu, QAction, QStyledItemDelegate, QComboBox, QVBoxLayout, QCheckBox, QDialog, QAbstractItemView
+from PyQt5.QtWidgets import (
+    QApplication,
+    QMenu,
+    QAction,
+    QStyledItemDelegate,
+    QComboBox,
+    QVBoxLayout,
+    QCheckBox,
+    QDialog,
+    QAbstractItemView,
+)
 
 from asyncua import ua
 from asyncua.sync import new_node
 from asyncua.common.ua_utils import string_to_val, val_to_string, data_type_to_string
 from asyncua.ua.uatypes import type_string_from_type
 
-from uawidgets.get_node_dialog import GetNodeButton
-from uawidgets.utils import trycatchslot
+from opcua_widgets.get_node_dialog import GetNodeButton
+from opcua_widgets.utils import trycatchslot
 
 
 logger = logging.getLogger(__name__)
@@ -26,6 +36,7 @@ def robust(func):
             return func(*args, **kwargs)
         except Exception:
             logger.exception("failed to call %s with args: %s %s", func, args, kwargs)
+
     return wrapper
 
 
@@ -90,7 +101,6 @@ class ListData(_Data):
 
 
 class AttrsWidget(QObject):
-
     error = pyqtSignal(Exception)
     attr_written = pyqtSignal(ua.AttributeIds, ua.DataValue)
 
@@ -104,7 +114,7 @@ class AttrsWidget(QObject):
         self.settings = QSettings()
         self.view.setItemDelegate(delegate)
         self.model = QStandardItemModel()
-        self.model.setHorizontalHeaderLabels(['Attribute', 'Value', 'DataType'])
+        self.model.setHorizontalHeaderLabels(["Attribute", "Value", "DataType"])
         state = self.settings.value("WindowState/attrs_widget_state", None)
         if state is not None:
             self.view.header().restoreState(state)
@@ -181,18 +191,25 @@ class AttrsWidget(QObject):
                 else:
                     self._show_attr(attr, dv)
             except Exception as ex:
-                logger.exception("Exception while displaying attribute %s with value %s for node %s", attr, dv, self.current_node)
+                logger.exception(
+                    "Exception while displaying attribute %s with value %s for node %s",
+                    attr,
+                    dv,
+                    self.current_node,
+                )
                 self.error.emit(ex)
 
     def _show_attr(self, attr, dv):
         if attr == ua.AttributeIds.DataType:
             # FIXME: Could query for browsename here, it does not cost much
             string = data_type_to_string(dv.Value.Value)
-        elif attr in (ua.AttributeIds.AccessLevel,
-                      ua.AttributeIds.UserAccessLevel,
-                      ua.AttributeIds.WriteMask,
-                      ua.AttributeIds.UserWriteMask,
-                      ua.AttributeIds.EventNotifier):
+        elif attr in (
+            ua.AttributeIds.AccessLevel,
+            ua.AttributeIds.UserAccessLevel,
+            ua.AttributeIds.WriteMask,
+            ua.AttributeIds.UserWriteMask,
+            ua.AttributeIds.EventNotifier,
+        ):
             string = enum_to_string(attr, dv.Value.Value)
         else:
             string = val_to_string(dv.Value.Value)
@@ -213,7 +230,9 @@ class AttrsWidget(QObject):
     def _show_sdef_attr(self, attr, dv):
         if dv.Value.Value is None:
             return
-        items = self._show_val(self.model, None, "DataTypeDefinition", dv.Value.Value, dv.Value.VariantType)
+        items = self._show_val(
+            self.model, None, "DataTypeDefinition", dv.Value.Value, dv.Value.VariantType
+        )
         items[1].setData(AttributeData(attr, dv.Value.Value, dv.Value.VariantType), Qt.UserRole)
 
     @robust
@@ -268,12 +287,24 @@ class AttrsWidget(QObject):
             self._show_val(item, val, field.name, member_val, attr)
 
     def _show_timestamps(self, item, dv):
-        #while item.hasChildren():
-            #self.model.removeRow(0, item.index())
+        # while item.hasChildren():
+        # self.model.removeRow(0, item.index())
         string = val_to_string(dv.ServerTimestamp)
-        item.appendRow([QStandardItem("Server Timestamp"), QStandardItem(string), QStandardItem(ua.VariantType.DateTime.name)])
+        item.appendRow(
+            [
+                QStandardItem("Server Timestamp"),
+                QStandardItem(string),
+                QStandardItem(ua.VariantType.DateTime.name),
+            ]
+        )
         string = val_to_string(dv.SourceTimestamp)
-        item.appendRow([QStandardItem("Source Timestamp"), QStandardItem(string), QStandardItem(ua.VariantType.DateTime.name)])
+        item.appendRow(
+            [
+                QStandardItem("Source Timestamp"),
+                QStandardItem(string),
+                QStandardItem(ua.VariantType.DateTime.name),
+            ]
+        )
 
     def get_all_attrs(self):
         attrs = [attr for attr in ua.AttributeIds]
@@ -287,7 +318,6 @@ class AttrsWidget(QObject):
 
 
 class MyDelegate(QStyledItemDelegate):
-
     error = pyqtSignal(Exception)
     attr_written = pyqtSignal(ua.AttributeIds, ua.DataValue)
 
@@ -332,11 +362,13 @@ class MyDelegate(QStyledItemDelegate):
             startnode = new_node(self.attrs_widget.current_node, ua.ObjectIds.BaseDataType)
             button = GetNodeButton(parent, node, startnode)
             return button
-        elif data.attr in (ua.AttributeIds.AccessLevel,
-                           ua.AttributeIds.UserAccessLevel,
-                           ua.AttributeIds.WriteMask,
-                           ua.AttributeIds.UserWriteMask,
-                           ua.AttributeIds.EventNotifier):
+        elif data.attr in (
+            ua.AttributeIds.AccessLevel,
+            ua.AttributeIds.UserAccessLevel,
+            ua.AttributeIds.WriteMask,
+            ua.AttributeIds.UserWriteMask,
+            ua.AttributeIds.EventNotifier,
+        ):
             return BitEditor(parent, data.attr, data.value)
         else:
             return QStyledItemDelegate.createEditor(self, parent, option, idx)
@@ -385,12 +417,14 @@ class MyDelegate(QStyledItemDelegate):
 
     def _write_attribute_data(self, data, editor, model, idx):
         if data.attr is ua.AttributeIds.Value:
-            #for value we checkd data type from the variable data type
+            # for value we checkd data type from the variable data type
             # this is more robust
             try:
                 data.uatype = self.attrs_widget.current_node.read_data_type_as_variant_type()
             except Exception as ex:
-                logger.exception("Could get primitive type of variable %s", self.attrs_widget.current_node)
+                logger.exception(
+                    "Could get primitive type of variable %s", self.attrs_widget.current_node
+                )
                 self.error.emit(ex)
                 raise
 
@@ -403,11 +437,13 @@ class MyDelegate(QStyledItemDelegate):
         elif data.attr == ua.AttributeIds.DataType:
             data.value = editor.get_node().nodeid
             text = data_type_to_string(data.value)
-        elif data.attr in (ua.AttributeIds.AccessLevel,
-                           ua.AttributeIds.UserAccessLevel,
-                           ua.AttributeIds.WriteMask,
-                           ua.AttributeIds.UserWriteMask,
-                           ua.AttributeIds.EventNotifier):
+        elif data.attr in (
+            ua.AttributeIds.AccessLevel,
+            ua.AttributeIds.UserAccessLevel,
+            ua.AttributeIds.WriteMask,
+            ua.AttributeIds.UserWriteMask,
+            ua.AttributeIds.EventNotifier,
+        ):
             data.value = editor.get_byte()
             text = enum_to_string(data.attr, data.value)
         else:
@@ -426,7 +462,12 @@ class MyDelegate(QStyledItemDelegate):
     def _write_attr(self, data):
         dv = ua.DataValue(ua.Variant(data.value, VariantType=data.uatype))
         try:
-            logger.info("Writing attribute %s of node %s with value: %s", data.attr, self.attrs_widget.current_node, dv)
+            logger.info(
+                "Writing attribute %s of node %s with value: %s",
+                data.attr,
+                self.attrs_widget.current_node,
+                dv,
+            )
             self.attrs_widget.current_node.write_attribute(data.attr, dv)
         except Exception as ex:
             logger.exception("Exception while writing %s to %s", dv, data.attr)

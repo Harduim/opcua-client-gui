@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QLabel
 from asyncua import ua
 from asyncua.sync import SyncNode
 
-from uawidgets.utils import trycatchslot
+from opcua_widgets.utils import trycatchslot
 
 use_graph = True
 try:

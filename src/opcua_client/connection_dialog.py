@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QDialog, QFileDialog
 
 from opcua_client.connection_ui import Ui_ConnectionDialog
-from uawidgets.utils import trycatchslot
+from opcua_widgets.utils import trycatchslot
 
 
 class ConnectionDialog(QDialog):

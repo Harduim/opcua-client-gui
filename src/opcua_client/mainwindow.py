@@ -29,12 +29,12 @@ from opcua_client.connection_dialog import ConnectionDialog
 from opcua_client.application_certificate_dialog import ApplicationCertificateDialog
 from opcua_client.graphwidget import GraphUI
 
-from uawidgets.attrs_widget import AttrsWidget
-from uawidgets.tree_widget import TreeWidget
-from uawidgets.refs_widget import RefsWidget
-from uawidgets.utils import trycatchslot
-from uawidgets.logger import QtHandler
-from uawidgets.call_method_dialog import CallMethodDialog
+from opcua_widgets.attrs_widget import AttrsWidget
+from opcua_widgets.tree_widget import TreeWidget
+from opcua_widgets.refs_widget import RefsWidget
+from opcua_widgets.utils import trycatchslot
+from opcua_widgets.logger import QtHandler
+from opcua_widgets.call_method_dialog import CallMethodDialog
 
 
 logger = logging.getLogger(__name__)

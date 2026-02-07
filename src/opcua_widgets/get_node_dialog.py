@@ -1,11 +1,21 @@
 from PyQt5.QtCore import pyqtSignal
-from PyQt5.QtWidgets import QTreeView, QDialog, QHBoxLayout, QVBoxLayout, QDialogButtonBox, QAbstractItemView, QPushButton, QLineEdit, QWidget
+from PyQt5.QtWidgets import (
+    QTreeView,
+    QDialog,
+    QHBoxLayout,
+    QVBoxLayout,
+    QDialogButtonBox,
+    QAbstractItemView,
+    QPushButton,
+    QLineEdit,
+    QWidget,
+)
 from PyQt5.QtCore import Qt
 
 from asyncua import ua
 from asyncua.sync import new_node, SyncNode
 
-from uawidgets.tree_widget import TreeWidget
+from opcua_widgets.tree_widget import TreeWidget
 
 
 class GetNodeTextButton(QWidget):
@@ -92,8 +102,8 @@ class GetNodeDialog(QDialog):
         layout.addWidget(self.treeview)
 
         self.buttons = QDialogButtonBox(
-            QDialogButtonBox.Ok | QDialogButtonBox.Cancel,
-            Qt.Horizontal, self)
+            QDialogButtonBox.Ok | QDialogButtonBox.Cancel, Qt.Horizontal, self
+        )
         layout.addWidget(self.buttons)
         self.resize(800, 600)
 

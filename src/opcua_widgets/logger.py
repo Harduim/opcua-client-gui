@@ -2,7 +2,6 @@ import logging
 
 
 class QtHandler(logging.Handler):
-
     def __init__(self, widget):
         logging.Handler.__init__(self)
         self.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
@@ -13,7 +12,3 @@ class QtHandler(logging.Handler):
         msg = self.format(record)
         print(msg)  # print to stdout also!
         self.widget.append(msg)
-
-
-
-

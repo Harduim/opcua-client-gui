@@ -7,7 +7,6 @@ from asyncua.sync import new_node
 
 
 class TreeWidget(QObject):
-
     error = pyqtSignal(Exception)
 
     def __init__(self, view):
@@ -18,7 +17,7 @@ class TreeWidget(QObject):
         self.model.error.connect(self.error)
         self.view.setModel(self.model)
 
-        self.model.setHorizontalHeaderLabels(['DisplayName', "BrowseName", 'NodeId'])
+        self.model.setHorizontalHeaderLabels(["DisplayName", "BrowseName", "NodeId"])
         self.view.header().setSectionResizeMode(0)
         self.view.header().setStretchLastSection(True)
         self.view.setSelectionBehavior(QAbstractItemView.SelectRows)
@@ -55,7 +54,9 @@ class TreeWidget(QObject):
         Expand tree until given node and select it
         """
         if isinstance(node, str):
-            idxlist = self.model.match(self.model.index(0, 0), Qt.DisplayRole, node, 1, Qt.MatchExactly|Qt.MatchRecursive)
+            idxlist = self.model.match(
+                self.model.index(0, 0), Qt.DisplayRole, node, 1, Qt.MatchExactly | Qt.MatchRecursive
+            )
             if not idxlist:
                 raise ValueError(f"Node {node} not found in tree")
             node = self.model.data(idxlist[0], Qt.UserRole)
@@ -67,14 +68,18 @@ class TreeWidget(QObject):
                 text = node.read_display_name().Text
             except ua.UaError:
                 return
-            idxlist = self.model.match(self.model.index(0, 0), Qt.DisplayRole, text, 1, Qt.MatchExactly|Qt.MatchRecursive)
+            idxlist = self.model.match(
+                self.model.index(0, 0), Qt.DisplayRole, text, 1, Qt.MatchExactly | Qt.MatchRecursive
+            )
             if idxlist:
                 idx = idxlist[0]
                 self.view.setExpanded(idx, True)
                 self.view.setCurrentIndex(idx)
                 self.view.activated.emit(idx)
             else:
-                print(f"While expanding tree, Could not find node {node} in tree view, this might be OK")
+                print(
+                    f"While expanding tree, Could not find node {node} in tree view, this might be OK"
+                )
 
     def copy_nodeid(self):
         node = self.get_current_node()
@@ -126,8 +131,8 @@ class TreeWidget(QObject):
         if node:
             self.model.reset_cache(node)
             idx = self.model.indexFromItem(item)
-            #if self.view.isExpanded(idx):
-            #self.view.setExpanded(idx, True)
+            # if self.view.isExpanded(idx):
+            # self.view.setExpanded(idx, True)
 
     def remove_current_item(self):
         idx = self.view.currentIndex()
@@ -149,7 +154,6 @@ class TreeWidget(QObject):
 
 
 class TreeViewModel(QStandardItemModel):
-
     error = pyqtSignal(Exception)
 
     def __init__(self):
@@ -166,7 +170,14 @@ class TreeViewModel(QStandardItemModel):
         self.add_item(desc, node=node)
 
     def _get_node_desc(self, node):
-        attrs = node.read_attributes([ua.AttributeIds.DisplayName, ua.AttributeIds.BrowseName, ua.AttributeIds.NodeId, ua.AttributeIds.NodeClass])
+        attrs = node.read_attributes(
+            [
+                ua.AttributeIds.DisplayName,
+                ua.AttributeIds.BrowseName,
+                ua.AttributeIds.NodeId,
+                ua.AttributeIds.NodeClass,
+            ]
+        )
         desc = ua.ReferenceDescription()
         desc.DisplayName = attrs[0].Value.Value
         desc.BrowseName = attrs[1].Value.Value
@@ -248,7 +259,7 @@ class TreeViewModel(QStandardItemModel):
             descs.sort(key=lambda x: x.BrowseName)
             added = []
             for desc in descs:
-                if not desc.NodeId in added:
+                if desc.NodeId not in added:
                     self.add_item(desc, parent)
                     added.append(desc.NodeId)
         except Exception as ex:
@@ -266,5 +277,3 @@ class TreeViewModel(QStandardItemModel):
                     nodes.append(node.nodeid.to_string())
         mdata.setText(", ".join(nodes))
         return mdata
-
-

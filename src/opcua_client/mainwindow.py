@@ -176,7 +176,7 @@ class DataChangeUI(object):
             if node is None:
                 return
         if node in self._subscribed_nodes:
-            logger.warning("allready subscribed to node: %s ", node)
+            logger.warning("already subscribed to node: %s ", node)
             return
         self.model.setHorizontalHeaderLabels(["DisplayName", "Value", "Timestamp"])
         text = str(node.read_display_name().Text)

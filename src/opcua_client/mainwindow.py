@@ -10,16 +10,16 @@ from PyQt5.QtCore import pyqtSignal, QFile, QTimer, Qt, QObject, QSettings, QTex
 from PyQt5.QtGui import QStandardItemModel, QStandardItem, QIcon
 from PyQt5.QtWidgets import QMainWindow, QMessageBox, QWidget, QApplication, QMenu, QDialog
 
-from uaclient.theme import breeze_resources
+from opcua_client.theme import breeze_resources
 
 from asyncua import ua
 from asyncua.sync import SyncNode
 
-from uaclient.uaclient import UaClient
-from uaclient.mainwindow_ui import Ui_MainWindow
-from uaclient.connection_dialog import ConnectionDialog
-from uaclient.application_certificate_dialog import ApplicationCertificateDialog
-from uaclient.graphwidget import GraphUI
+from opcua_client.uaclient import UaClient
+from opcua_client.mainwindow_ui import Ui_MainWindow
+from opcua_client.connection_dialog import ConnectionDialog
+from opcua_client.application_certificate_dialog import ApplicationCertificateDialog
+from opcua_client.graphwidget import GraphUI
 
 from uawidgets import resources  # must be here for ressources even if not used
 from uawidgets.attrs_widget import AttrsWidget

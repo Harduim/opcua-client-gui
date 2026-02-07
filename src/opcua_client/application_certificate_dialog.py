@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QDialog, QFileDialog
 
-from uaclient.applicationcertificate_ui import Ui_ApplicationCertificateDialog
+from opcua_client.applicationcertificate_ui import Ui_ApplicationCertificateDialog
 
 
 class ApplicationCertificateDialog(QDialog):

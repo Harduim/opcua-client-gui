@@ -15,6 +15,7 @@ dependencies = [
     "numpy>=1.24.4",
     "opcua-widgets>=0.6.0",
     "PyQt5",
+    "pyqtgraph>=0.14.0",
 ]
 keywords = ["opcua", "client", "gui", "industrial", "automation"]
 classifiers = [

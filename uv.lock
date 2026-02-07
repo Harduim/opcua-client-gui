@@ -273,7 +273,6 @@ source = { editable = "." }
 dependencies = [
     { name = "asyncua" },
     { name = "numpy" },
-    { name = "opcua-widgets" },
     { name = "pyqt5" },
     { name = "pyqtgraph" },
 ]
@@ -288,7 +287,6 @@ dev = [
 requires-dist = [
     { name = "asyncua" },
     { name = "numpy", specifier = ">=1.24.4" },
-    { name = "opcua-widgets", specifier = ">=0.6.0" },
     { name = "pyqt5" },
     { name = "pyqtgraph", specifier = ">=0.14.0" },
 ]
@@ -297,18 +295,6 @@ requires-dist = [
 dev = [
     { name = "pytest", specifier = ">=6.0" },
     { name = "pytest-qt" },
-]
-
-[[package]]
-name = "opcua-widgets"
-version = "0.6.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "asyncua" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/0e/cb/27cd2e1f051b3ce0895c2836291c5c1aefa4fb88c271e61d555a7e461675/opcua-widgets-0.6.1.tar.gz", hash = "sha256:2388abc9d2e31847507230c8813f2f1ec70bb600743e594fd488d0f8a3681f8a", size = 209427, upload-time = "2022-02-13T10:12:47.45Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/3f/d6/e01185dc4d86efcd1c459d9bd83c254ce4ff8a41cd749835b5aa0cc4fe45/opcua_widgets-0.6.1-py3-none-any.whl", hash = "sha256:c0ef82f9f169f6bf1ff639906d2d8d2a4ec1618186845345bf2de18278c15199", size = 232050, upload-time = "2022-02-13T10:12:45.648Z" },
 ]
 
 [[package]]

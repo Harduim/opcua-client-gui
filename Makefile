@@ -12,3 +12,11 @@ edit:
 
 format:
 	ruff format src/; ruff check --fix src/
+
+simulator:
+	docker run --rm \
+    -it \
+    --name opcplc \
+    -p 50000:50000 \
+    -p 8080:8080 \
+    mcr.microsoft.com/iotedge/opc-plc:2.12.4 --unsecuretransport --autoaccept --trustowncert --appcertstoretype=Directory
